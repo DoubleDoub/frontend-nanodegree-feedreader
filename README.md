@@ -1,3 +1,16 @@
+#Udacity frontend-nanodegree-feedreader Project 6
+
+## Note to instructor
+
+I have written a test suite for a future feature.
+This future feature, the suite intends to test, will allow the user to add RSS feeds he or she likes. After adding this feed it should function like the other feeds. 
+
+I hope I have documented the test suite well enough. I hope any further explanation of the tests in the README will be redundant. 
+
+To run the tests clone this repo and open the index.html file in a recent browser.
+
+
+
 # Project Overview
 
 In this project you are given a web-based application that reads RSS feeds. The original developer of this application clearly saw the value in testing, they've already included [Jasmine](http://jasmine.github.io/) and even started writing their first test suite! Unfortunately, they decided to move on to start their own company and we're now left with an application with an incomplete test suite. That's where you come in.

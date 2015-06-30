@@ -31,30 +31,71 @@ $(function() {
          * in the allFeeds object and ensures it has a URL defined
          * and that the URL is not empty.
          */
-
+         it('all feeds have an url property that is longer than an empty string', function() {
+            for (var i = allFeeds.length - 1; i >= 0; i--) {
+                expect(typeof allFeeds[i].url).toBe('string');
+                expect(allFeeds[i].url).toBeDefined();
+                expect(allFeeds[i].url.length).toBeGreaterThan(0);
+            }
+         });
 
         /* TODO: Write a test that loops through each feed
          * in the allFeeds object and ensures it has a name defined
          * and that the name is not empty.
          */
+        it('all feeds have a name property that is longer than an empty string', function() {
+            for (var i = allFeeds.length - 1; i >= 0; i--) {
+                expect(typeof allFeeds[i].name).toBe('string');
+                expect(allFeeds[i].name).toBeDefined();
+                expect(allFeeds[i].name.length).toBeGreaterThan(0);
+            }
+        });
+
     });
 
 
     /* TODO: Write a new test suite named "The menu" */
+    describe('The menu', function() {
 
         /* TODO: Write a test that ensures the menu element is
          * hidden by default. You'll have to analyze the HTML and
          * the CSS to determine how we're performing the
          * hiding/showing of the menu element.
          */
+        it('should be hidden by default', function() {
+            var left = Math.ceil($(".menu").position().left);
+            var width = parseInt('-' + String($(".menu").width()));
+            expect(left).toBeLessThan(width);
+        });
 
          /* TODO: Write a test that ensures the menu changes
           * visibility when the menu icon is clicked. This test
           * should have two expectations: does the menu display when
           * clicked and does it hide when clicked again.
           */
+        it('should be visible and toggle back into hiding when clicked', function(done) {
+            //show menu by triggering click event on the element that is being listened too, to toggle the menu
+            $('.menu-icon-link').click();
+            var width = parseInt('-' + String($(".menu").width()));
+            // async because menu is being animated and it takes time to reflect in the dom
+            setTimeout(function(){
+                var left = Math.ceil($(".menu").position().left);
+                expect(left).toEqual(0);
+                // hide the menu again
+                $('.menu-icon-link').click();
+                // test if menu is offcanvas again
+                setTimeout(function(){
+                    var left = Math.ceil($(".menu").position().left);
+                    expect(left).toBeLessThan(width);
+                    // now we are done
+                    done();
+                },500);
+            },500);
+        });
+    });
 
     /* TODO: Write a new test suite named "Initial Entries" */
+    describe('Initial Entries', function() {
 
         /* TODO: Write a test that ensures when the loadFeed
          * function is called and completes its work, there is at least
@@ -62,11 +103,101 @@ $(function() {
          * Remember, loadFeed() is asynchronous so this test wil require
          * the use of Jasmine's beforeEach and asynchronous done() function.
          */
+        var callback;
+        
+        beforeEach(function(done) {
+            // create callback function
+            // we need a reference to check if loadFeed has been called with it
+            callback = (function (done) {
+                return function(){
+                    done();
+                };
+            })(done);
 
-    /* TODO: Write a new test suite named "New Feed Selection"
+            spyOn(window, 'loadFeed').and.callThrough();
 
+            loadFeed(0, callback);
+        });
+
+        it('should at least contain one entry after loadFeed has been called', function(done){
+            // check if loadFeed has been called (@instuctor a little overkill for learning purposes)
+            expect(window.loadFeed).toHaveBeenCalledWith(0, callback);
+            expect($('.feed').length).toBeGreaterThan(0);
+            done();
+        });
+    });
+    /* TODO: Write a new test suite named "New Feed Selection" */
+    describe('New Feed Selection', function() {
         /* TODO: Write a test that ensures when a new feed is loaded
          * by the loadFeed function that the content actually changes.
          * Remember, loadFeed() is asynchronous.
          */
+        var oldContent,
+            newContent;
+
+        beforeEach(function(done){
+            //get html of the feed before fetching new content
+            oldContent = $('.feed').html();
+            // feed with id 0 is already loaded so use next id
+            loadFeed(1, function() {
+                //get html after loading new feed content
+                newContent = $('.feed').html();
+                done();
+            });
+        });
+
+        //cleanup after ourselfes 
+        afterEach(function() {
+            oldContent = null;
+            newContent = null;
+        });
+
+        it('should not have the same content', function(done){
+            // compare the different html
+            expect(newContent).not.toEqual(oldContent);
+            done();
+        });
+    });
+
+    /* Additional test for future functionality */
+
+    describe('Add feed', function(){
+        
+        it('button should display an input field for users to provide a url to a new rss feed ', function(){
+            $('.add-feed-button').click();
+
+            //need an inputfield
+            expect($('.custom-feed-input').length).toBeGreaterThan(0);
+            
+            //need to have a sumbit button
+            expect($('.submit-feed-button').length).toBeGreaterThan(0);
+        });
+
+        it('input field should add feed item to feed list in the menu', function(){
+            var oldLength = allFeeds.length;
+
+            $('.submit-feed-button').click();
+            // should contain more items then before
+            expect(allFeeds.length).toBeGreaterThan(oldLength);
+            
+            // jquery object should contain as much items as allFeeds array does
+            expect($('.feedList').length).toEqual(allFeeds.length);
+
+            // id property should have been set on the new object in the array
+            expect(allFeeds[allFeeds.length-1].id).toEqual($('.feedList').length-1);
+            
+            //should have at least one item with this class
+            expect($('.custom-feed-list-item').length).toBeGreaterThan(0);
+        });
+
+        it('clicking the newly added feed in the menu should show new content', function(){
+            spyOn(window, 'loadFeed').and.callThrough();
+
+            $('.custom-feed-list-item')[0].click();
+            // clicking the new feed must call loadFeed
+            expect(window.loadFeed).toHaveBeenCalledWith(allFeeds.length-1);
+            // loadFeed has been tested so it should be ok now.... I hope... probably not
+        });
+    });
+
 }());
