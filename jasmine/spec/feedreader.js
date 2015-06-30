@@ -27,7 +27,7 @@ $(function() {
         });
 
 
-        /* TODO: Write a test that loops through each feed
+        /* Write a test that loops through each feed
          * in the allFeeds object and ensures it has a URL defined
          * and that the URL is not empty.
          */
@@ -39,7 +39,7 @@ $(function() {
             }
          });
 
-        /* TODO: Write a test that loops through each feed
+        /* Write a test that loops through each feed
          * in the allFeeds object and ensures it has a name defined
          * and that the name is not empty.
          */
@@ -54,21 +54,26 @@ $(function() {
     });
 
 
-    /* TODO: Write a new test suite named "The menu" */
+    /* Write a new test suite named "The menu" */
     describe('The menu', function() {
 
-        /* TODO: Write a test that ensures the menu element is
+        /* Write a test that ensures the menu element is
          * hidden by default. You'll have to analyze the HTML and
          * the CSS to determine how we're performing the
          * hiding/showing of the menu element.
          */
         it('should be hidden by default', function() {
+            // check if menu element is completely offcanvas
+            // could also test for css class presence but that doesn't say much
             var left = Math.ceil($(".menu").position().left);
             var width = parseInt('-' + String($(".menu").width()));
             expect(left).toBeLessThan(width);
+            // check for css class anyway
+            expect($('body')[0].classList.contains('menu-hidden')).toEqual(true);
         });
 
-         /* TODO: Write a test that ensures the menu changes
+
+         /* Write a test that ensures the menu changes
           * visibility when the menu icon is clicked. This test
           * should have two expectations: does the menu display when
           * clicked and does it hide when clicked again.
@@ -79,14 +84,21 @@ $(function() {
             var width = parseInt('-' + String($(".menu").width()));
             // async because menu is being animated and it takes time to reflect in the dom
             setTimeout(function(){
+                //check elements postion
                 var left = Math.ceil($(".menu").position().left);
                 expect(left).toEqual(0);
+                // check presence of css class
+                expect($('body')[0].classList.contains('menu-hidden')).toEqual(false);
+
                 // hide the menu again
                 $('.menu-icon-link').click();
                 // test if menu is offcanvas again
                 setTimeout(function(){
+                    // check if position has been translated enough to cover its width
                     var left = Math.ceil($(".menu").position().left);
                     expect(left).toBeLessThan(width);
+                    // check for presence of css class 
+                    expect($('body')[0].classList.contains('menu-hidden')).toEqual(true);
                     // now we are done
                     done();
                 },500);
@@ -94,10 +106,10 @@ $(function() {
         });
     });
 
-    /* TODO: Write a new test suite named "Initial Entries" */
+    /* Write a new test suite named "Initial Entries" */
     describe('Initial Entries', function() {
 
-        /* TODO: Write a test that ensures when the loadFeed
+        /* Write a test that ensures when the loadFeed
          * function is called and completes its work, there is at least
          * a single .entry element within the .feed container.
          * Remember, loadFeed() is asynchronous so this test wil require
@@ -126,9 +138,9 @@ $(function() {
             done();
         });
     });
-    /* TODO: Write a new test suite named "New Feed Selection" */
+    /*  Write a new test suite named "New Feed Selection" */
     describe('New Feed Selection', function() {
-        /* TODO: Write a test that ensures when a new feed is loaded
+        /* Write a test that ensures when a new feed is loaded
          * by the loadFeed function that the content actually changes.
          * Remember, loadFeed() is asynchronous.
          */
@@ -136,25 +148,27 @@ $(function() {
             newContent;
 
         beforeEach(function(done){
-            //get html of the feed before fetching new content
-            oldContent = $('.feed').html();
+            //get html of the first feed entry before fetching new content
+            oldInnerHtml = $('.feed').children('a')[0].innerHTML;
             // feed with id 0 is already loaded so use next id
             loadFeed(1, function() {
                 //get html after loading new feed content
-                newContent = $('.feed').html();
+                newInnerHtml = $('.feed').children('a')[0].innerHTML;
                 done();
             });
         });
 
-        //cleanup after ourselfes 
+        //cleanup after ourselfes
         afterEach(function() {
             oldContent = null;
             newContent = null;
         });
 
         it('should not have the same content', function(done){
+            // there should be at least one entry
+            expect($('.feed').length).toBeGreaterThan(0);
             // compare the different html
-            expect(newContent).not.toEqual(oldContent);
+            expect(newInnerHtml).not.toEqual(oldInnerHtml);
             done();
         });
     });
@@ -168,7 +182,7 @@ $(function() {
 
             //need an inputfield
             expect($('.custom-feed-input').length).toBeGreaterThan(0);
-            
+
             //need to have a sumbit button
             expect($('.submit-feed-button').length).toBeGreaterThan(0);
         });
@@ -179,13 +193,13 @@ $(function() {
             $('.submit-feed-button').click();
             // should contain more items then before
             expect(allFeeds.length).toBeGreaterThan(oldLength);
-            
+
             // jquery object should contain as much items as allFeeds array does
             expect($('.feedList').length).toEqual(allFeeds.length);
 
             // id property should have been set on the new object in the array
             expect(allFeeds[allFeeds.length-1].id).toEqual($('.feedList').length-1);
-            
+
             //should have at least one item with this class
             expect($('.custom-feed-list-item').length).toBeGreaterThan(0);
         });
