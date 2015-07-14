@@ -1,11 +1,13 @@
 #Udacity frontend-nanodegree-feedreader Project 6
 
-## Note to instructor
+## Note to reviewer
 
-I have written a test suite for a future feature.
-This future feature, the suite intends to test, will allow the user to add RSS feeds he or she likes. After adding this feed it should function like the other feeds. 
+I have written a test suite for a future feature. The test will fail because the feature has not been implemented.
+This future feature, the suite intends to test, will allow the user to add RSS feeds he or she likes. The menu needs an 'add feed' button. Clicking this button will provide an input field in wich the user wil be able to enter an url for the new feed. After adding a feed it should function like the other feeds.
 
-I hope I have documented the test suite well enough. I hope any further explanation of the tests in the README will be redundant. 
+I hope I have documented the test suite well enough. I expect any further explanation of the feature in the README will be redundant. 
+
+Besides testing whether classes for css styling are applied when the menus is hidden I also test if the menu truly is off-canvas.
 
 To run the tests clone this repo and open the index.html file in a recent browser.
 
