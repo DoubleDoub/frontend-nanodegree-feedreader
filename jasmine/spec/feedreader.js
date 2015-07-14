@@ -62,16 +62,18 @@ $(function() {
          * the CSS to determine how we're performing the
          * hiding/showing of the menu element.
          */
-        it('should be hidden by default', function() {
-            // check if menu element is completely offcanvas
-            // could also test for css class presence but that doesn't say much
-            var left = Math.ceil($(".menu").position().left);
-            var width = parseInt('-' + String($(".menu").width()));
-            expect(left).toBeLessThan(width);
-            // check for css class anyway
+        it('body element should have a class of menu-hidden by default', function() {
             expect($('body')[0].classList.contains('menu-hidden')).toEqual(true);
         });
 
+        // test to ensure that the menu is truly hidden off the canvas
+        // @reviewer Additional test.
+        it('should be offcanvas by default', function() {
+            var left = Math.ceil($(".menu").position().left);
+            var width = parseInt('-' + String($(".menu").width()));
+            // transform translate on x axis should cover its width
+            expect(left).toBeLessThan(width);
+        });
 
          /* Write a test that ensures the menu changes
           * visibility when the menu icon is clicked. This test
@@ -132,12 +134,18 @@ $(function() {
         });
 
         it('should at least contain one entry after loadFeed has been called', function(done){
-            // check if loadFeed has been called (@instuctor a little overkill for learning purposes)
+            // check if loadFeed has been called (@reviewer a little overkill for learning purposes)
             expect(window.loadFeed).toHaveBeenCalledWith(0, callback);
             expect($('.feed').length).toBeGreaterThan(0);
+            // check for entry
+            console.log(typeof $('.feed').find('.entry'));
+            console.log([] instanceof Array);
+
+            expect($('.feed').find('.entry').length).toBeGreaterThan(0)
             done();
         });
     });
+
     /*  Write a new test suite named "New Feed Selection" */
     describe('New Feed Selection', function() {
         /* Write a test that ensures when a new feed is loaded
@@ -174,12 +182,10 @@ $(function() {
     });
 
     /* Additional test for future functionality */
-
-    describe('Add feed', function(){
+    describe('Add feed feature', function(){
         
-        it('button should display an input field for users to provide a url to a new rss feed ', function(){
+        it('button should display an input field for users to provide an url to a new rss feed ', function(){
             $('.add-feed-button').click();
-
             //need an inputfield
             expect($('.custom-feed-input').length).toBeGreaterThan(0);
 
@@ -210,7 +216,7 @@ $(function() {
             $('.custom-feed-list-item')[0].click();
             // clicking the new feed must call loadFeed
             expect(window.loadFeed).toHaveBeenCalledWith(allFeeds.length-1);
-            // loadFeed has been tested so it should be ok now.... I hope... probably not
+            // loadFeed has been tested so it should be ok
         });
     });
 
