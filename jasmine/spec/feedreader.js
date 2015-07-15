@@ -141,7 +141,7 @@ $(function() {
             console.log(typeof $('.feed').find('.entry'));
             console.log([] instanceof Array);
 
-            expect($('.feed').find('.entry').length).toBeGreaterThan(0)
+            expect($('.feed').find('.entry').length).toBeGreaterThan(0);
             done();
         });
     });
@@ -152,24 +152,25 @@ $(function() {
          * by the loadFeed function that the content actually changes.
          * Remember, loadFeed() is asynchronous.
          */
-        var oldContent,
-            newContent;
+        var oldInnerHtml,
+            newInnerHtml;
 
         beforeEach(function(done){
-            //get html of the first feed entry before fetching new content
-            oldInnerHtml = $('.feed').children('a')[0].innerHTML;
-            // feed with id 0 is already loaded so use next id
-            loadFeed(1, function() {
-                //get html after loading new feed content
-                newInnerHtml = $('.feed').children('a')[0].innerHTML;
-                done();
+            loadFeed(0, function() {
+                //get html of the first feed entry before fetching new content
+                oldInnerHtml = $('.feed').children('a')[0].innerHTML;
+                loadFeed(1, function() {
+                    //get html after loading new feed content
+                    newInnerHtml = $('.feed').children('a')[0].innerHTML;
+                    done();
+                });
             });
         });
 
         //cleanup after ourselfes
         afterEach(function() {
-            oldContent = null;
-            newContent = null;
+            oldInnerHtml = null;
+            newInnerHtml = null;
         });
 
         it('should not have the same content', function(done){
